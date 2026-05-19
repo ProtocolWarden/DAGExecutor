@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import shlex
+from typing import Literal
 
 from dag_executor.models import NodeResult, NodeSpec
 from dag_executor.nodes.base import run_subprocess
@@ -11,8 +12,8 @@ from dag_executor.variables import SubstitutionContext, substitute
 
 class AgentNodeRunner:
     """
-    D1 invariant: goal_text from GraphSpec reaches `claude --message` verbatim.
-    The node's command field (if present) is appended as an additional system prompt.
+    D1 invariant: goal_text from GraphSpec reaches the CLI verbatim.
+    Supports claude_code (default) and codex_cli worker backends.
     """
 
     def run(
@@ -21,23 +22,16 @@ class AgentNodeRunner:
         context: SubstitutionContext,
         artifacts_dir: str,
         working_directory: str,
+        worker_backend: Literal["claude_code", "codex_cli"] = "claude_code",
     ) -> NodeResult:
         goal_text = context.goal_text
         model = node.model or "claude-sonnet-4-5"
 
-        parts = [
-            "claude",
-            "--message", shlex.quote(goal_text),
-            "--output-format", "json",
-            "--no-auto-commits",
-            "--model", shlex.quote(model),
-        ]
+        if worker_backend == "codex_cli":
+            cmd = self._build_codex_cmd(goal_text, model)
+        else:
+            cmd = self._build_claude_cmd(goal_text, model, node, context)
 
-        if node.command:
-            extra = substitute(node.command, context)
-            parts += ["--append-system-prompt", shlex.quote(extra)]
-
-        cmd = " ".join(parts)
         exit_code, stdout, stderr = run_subprocess(
             cmd,
             cwd=working_directory,
@@ -52,3 +46,30 @@ class AgentNodeRunner:
             exit_code=exit_code,
             error=stderr if not success else None,
         )
+
+    def _build_claude_cmd(
+        self,
+        goal_text: str,
+        model: str,
+        node: NodeSpec,
+        context: SubstitutionContext,
+    ) -> str:
+        parts = [
+            "claude",
+            "--message", shlex.quote(goal_text),
+            "--output-format", "json",
+            "--no-auto-commits",
+            "--model", shlex.quote(model),
+        ]
+        if node.command:
+            extra = substitute(node.command, context)
+            parts += ["--append-system-prompt", shlex.quote(extra)]
+        return " ".join(parts)
+
+    def _build_codex_cmd(self, goal_text: str, model: str) -> str:
+        return " ".join([
+            "codex",
+            "--model", shlex.quote(model),
+            "--approval-mode", "full-auto",
+            "-q", shlex.quote(goal_text),
+        ])
