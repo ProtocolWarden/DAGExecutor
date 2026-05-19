@@ -1,4 +1,4 @@
-# DagExecutor
+# DAGExecutor
 
 DAG execution engine for the owned execution topology layer. Phase 1 implementation.
 

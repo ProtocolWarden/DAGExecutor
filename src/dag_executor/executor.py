@@ -61,7 +61,7 @@ def _build_context(
     )
 
 
-class DagExecutorRunner:
+class DAGExecutorRunner:
     def __init__(
         self,
         artifacts_dir: str | None = None,

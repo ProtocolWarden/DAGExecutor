@@ -2,7 +2,7 @@
 
 ## Objective
 
-Phase 1: Build the core DagExecutor package — loader, graph, node runners, executor, evidence.
+Phase 1: Build the core DAGExecutor package — loader, graph, node runners, executor, evidence.
 
 ## Definition of Done
 

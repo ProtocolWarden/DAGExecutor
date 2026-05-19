@@ -24,7 +24,7 @@ You will receive an acknowledgment within 72 hours. We aim to release a fix with
 
 ## Scope
 
-DagExecutor is the DAG-based workflow executor for bounded AI task orchestration. The primary security surface is:
+DAGExecutor is the DAG-based workflow executor for bounded AI task orchestration. The primary security surface is:
 
 - **Arbitrary command execution** via bash/script nodes in the DAG
 - **Path traversal** via workspace or artifact path construction

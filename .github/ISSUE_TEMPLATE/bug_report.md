@@ -34,7 +34,7 @@ Include which stage failed:
 
 - OS: 
 - Python version: 
-- DagExecutor version / commit: 
+- DAGExecutor version / commit: 
 
 ## Relevant Output
 

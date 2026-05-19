@@ -1,6 +1,6 @@
-# Contributing to DagExecutor
+# Contributing to DAGExecutor
 
-DagExecutor is the DAG-based workflow executor for the platform. It drives multi-node AI task graphs with topological scheduling, concurrent layer execution, and file-based human gate approval.
+DAGExecutor is the DAG-based workflow executor for the platform. It drives multi-node AI task graphs with topological scheduling, concurrent layer execution, and file-based human gate approval.
 
 ## Before You Start
 
@@ -11,8 +11,8 @@ DagExecutor is the DAG-based workflow executor for the platform. It drives multi
 ## Development Setup
 
 ```bash
-git clone https://github.com/ProtocolWarden/DagExecutor.git
-cd DagExecutor
+git clone https://github.com/ProtocolWarden/DAGExecutor.git
+cd DAGExecutor
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"

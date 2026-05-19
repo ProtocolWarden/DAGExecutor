@@ -6,7 +6,7 @@ import argparse
 import json
 import sys
 
-from dag_executor.executor import DagExecutorRunner
+from dag_executor.executor import DAGExecutorRunner
 
 
 def app() -> None:
@@ -25,7 +25,7 @@ def app() -> None:
     args = parser.parse_args()
 
     if args.command == "run":
-        runner = DagExecutorRunner(
+        runner = DAGExecutorRunner(
             artifacts_dir=args.artifacts_dir,
             working_directory=args.working_dir,
         )

@@ -5,7 +5,7 @@ from __future__ import annotations
 import yaml
 import pytest
 
-from dag_executor.executor import DagExecutorRunner
+from dag_executor.executor import DAGExecutorRunner
 from dag_executor.loader import load_graph
 from dag_executor.models import GraphSpec, NodeSpec, NodeType
 
@@ -17,14 +17,14 @@ def _spec(nodes: list[dict], goal: str = "test goal") -> GraphSpec:
 
 def test_single_bash_node_succeeds(tmp_path):
     spec = _spec([{"id": "n1", "type": "bash", "command": "echo done"}])
-    runner = DagExecutorRunner(artifacts_dir=str(tmp_path))
+    runner = DAGExecutorRunner(artifacts_dir=str(tmp_path))
     result = runner.run_graph(spec)
     assert result["status"] == "succeeded"
 
 
 def test_single_bash_failure(tmp_path):
     spec = _spec([{"id": "n1", "type": "bash", "command": "exit 1"}])
-    runner = DagExecutorRunner(artifacts_dir=str(tmp_path))
+    runner = DAGExecutorRunner(artifacts_dir=str(tmp_path))
     result = runner.run_graph(spec)
     assert result["status"] == "failed"
 
@@ -34,7 +34,7 @@ def test_linear_chain_all_succeed(tmp_path):
         {"id": "a", "type": "bash", "command": "echo a"},
         {"id": "b", "type": "bash", "command": "echo b", "depends_on": ["a"]},
     ])
-    runner = DagExecutorRunner(artifacts_dir=str(tmp_path))
+    runner = DAGExecutorRunner(artifacts_dir=str(tmp_path))
     result = runner.run_graph(spec)
     assert result["status"] == "succeeded"
 
@@ -50,7 +50,7 @@ def test_skip_on_dep_failure(tmp_path):
             "trigger_rule": "all_success",
         },
     ])
-    runner = DagExecutorRunner(artifacts_dir=str(tmp_path))
+    runner = DAGExecutorRunner(artifacts_dir=str(tmp_path))
     result = runner.run_graph(spec)
     assert result["status"] == "failed"
     node_results = result["metadata"]["node_results"]
@@ -64,7 +64,7 @@ def test_parallel_layer_all_succeed(tmp_path):
         {"id": "b", "type": "bash", "command": "echo b"},
         {"id": "c", "type": "bash", "command": "echo c"},
     ])
-    runner = DagExecutorRunner(artifacts_dir=str(tmp_path))
+    runner = DAGExecutorRunner(artifacts_dir=str(tmp_path))
     result = runner.run_graph(spec)
     assert result["status"] == "succeeded"
     assert result["metadata"]["evidence"]["nodes_run"] == 3
@@ -81,7 +81,7 @@ def test_all_done_trigger_runs_despite_failure(tmp_path):
             "trigger_rule": "all_done",
         },
     ])
-    runner = DagExecutorRunner(artifacts_dir=str(tmp_path))
+    runner = DAGExecutorRunner(artifacts_dir=str(tmp_path))
     result = runner.run_graph(spec)
     node_results = result["metadata"]["node_results"]
     always_res = next(r for r in node_results if r["node_id"] == "always_node")
@@ -95,14 +95,14 @@ def test_run_from_yaml(tmp_path):
     }
     yaml_file = tmp_path / "test.yaml"
     yaml_file.write_text(yaml.dump(data))
-    runner = DagExecutorRunner(artifacts_dir=str(tmp_path))
+    runner = DAGExecutorRunner(artifacts_dir=str(tmp_path))
     result = runner.run_from_yaml(str(yaml_file), goal_text="test")
     assert result["status"] == "succeeded"
 
 
 def test_empty_graph_succeeds(tmp_path):
     spec = _spec([])
-    runner = DagExecutorRunner(artifacts_dir=str(tmp_path))
+    runner = DAGExecutorRunner(artifacts_dir=str(tmp_path))
     result = runner.run_graph(spec)
     assert result["status"] == "succeeded"
     assert result["metadata"]["evidence"]["nodes_run"] == 0
@@ -110,7 +110,7 @@ def test_empty_graph_succeeds(tmp_path):
 
 def test_runtime_result_schema_fields(tmp_path):
     spec = _spec([{"id": "n", "type": "bash", "command": "echo"}])
-    runner = DagExecutorRunner(artifacts_dir=str(tmp_path))
+    runner = DAGExecutorRunner(artifacts_dir=str(tmp_path))
     result = runner.run_graph(spec)
     for field in (
         "schema_version", "contract_kind", "invocation_id", "runtime_name",
