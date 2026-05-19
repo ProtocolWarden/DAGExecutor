@@ -2,7 +2,6 @@
 # Copyright (C) 2026 ProtocolWarden
 from __future__ import annotations
 
-import shlex
 from typing import Literal
 
 from dag_executor.models import NodeResult, NodeSpec
@@ -53,23 +52,18 @@ class AgentNodeRunner:
         model: str,
         node: NodeSpec,
         context: SubstitutionContext,
-    ) -> str:
-        parts = [
+    ) -> list[str]:
+        cmd = [
             "claude",
-            "--message", shlex.quote(goal_text),
+            "--message", goal_text,
             "--output-format", "json",
             "--no-auto-commits",
-            "--model", shlex.quote(model),
+            "--model", model,
         ]
         if node.command:
             extra = substitute(node.command, context)
-            parts += ["--append-system-prompt", shlex.quote(extra)]
-        return " ".join(parts)
+            cmd += ["--append-system-prompt", extra]
+        return cmd
 
-    def _build_codex_cmd(self, goal_text: str, model: str) -> str:
-        return " ".join([
-            "codex",
-            "--model", shlex.quote(model),
-            "--approval-mode", "full-auto",
-            "-q", shlex.quote(goal_text),
-        ])
+    def _build_codex_cmd(self, goal_text: str, model: str) -> list[str]:
+        return ["codex", "--model", model, "--approval-mode", "full-auto", "-q", goal_text]

@@ -1,5 +1,15 @@
 # Log
 
+## 2026-05-19 — ADR 0006 Phase 2: wire safe_run() in nodes/base.py
+
+- Replaced subprocess.run(shell=True) in run_subprocess() with core_runner.process.safe_run().
+- run_subprocess() now accepts list[str] | str; strings are split via shlex.split() (no shell features).
+- agent.py _build_claude_cmd/_build_codex_cmd now return list[str] directly (removed shlex.quote + join).
+- script.py uses [python, script_path] list form directly.
+- bash.py and loop.py unchanged — strings flow through shlex.split transparently.
+- Added core-runner dep to pyproject.toml; conftest.py adds ExecutorRuntime/src to sys.path.
+- 108 tests pass.
+
 ## 2026-05-18
 
 - Phase 1 initial build. All source modules written. Tests written against mocked rxp/cxrp contracts.
