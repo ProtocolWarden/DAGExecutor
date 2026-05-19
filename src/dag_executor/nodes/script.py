@@ -29,7 +29,7 @@ class ScriptNodeRunner:
         try:
             python = sys.executable
             exit_code, stdout, stderr = run_subprocess(
-                f"{python} {script_path}",
+                [python, script_path],
                 cwd=working_directory,
                 timeout=node.timeout_seconds,
             )
