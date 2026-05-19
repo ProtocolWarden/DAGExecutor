@@ -6,7 +6,7 @@ import os
 import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Literal
 
 from dag_executor.evidence import aggregate_evidence
 from dag_executor.graph import DagGraph
@@ -67,10 +67,12 @@ class DAGExecutorRunner:
         artifacts_dir: str | None = None,
         working_directory: str = ".",
         timeout_seconds: int | None = None,
+        worker_backend: Literal["claude_code", "codex_cli"] = "claude_code",
     ) -> None:
         self._artifacts_dir = artifacts_dir
         self._working_directory = working_directory
         self._timeout_seconds = timeout_seconds
+        self._worker_backend = worker_backend
 
     def run_graph(self, spec: GraphSpec) -> dict[str, Any]:
         started_at = _now()
@@ -145,12 +147,13 @@ class DAGExecutorRunner:
                 )
             runner_cls = _RUNNERS[node.type]
             runner = runner_cls()
-            return runner.run(
-                node,
-                ctx,
-                artifacts_dir=artifacts_dir,
-                working_directory=self._working_directory,
-            )
+            run_kwargs: dict = {
+                "artifacts_dir": artifacts_dir,
+                "working_directory": self._working_directory,
+            }
+            if node.type == NodeType.AGENT:
+                run_kwargs["worker_backend"] = self._worker_backend
+            return runner.run(node, ctx, **run_kwargs)
 
         if len(layer) == 1:
             results.append(run_node(layer[0]))
