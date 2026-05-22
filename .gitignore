@@ -9,11 +9,3 @@ build/
 .warehouse-venv/
 *.egg
 .console/.context
-
-# CLP runtime state
-.context/active/
-.context/archive/
-.context/capsules/
-.context/checkpoints/
-.context/handoffs/
-.context/leases/
