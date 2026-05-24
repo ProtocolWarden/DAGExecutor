@@ -5,11 +5,12 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from typing import NoReturn
 
 from dag_executor.executor import DAGExecutorRunner
 
 
-def app() -> None:
+def app() -> NoReturn:
     parser = argparse.ArgumentParser(
         prog="dag-executor",
         description="Execute a YAML DAG workflow",
@@ -30,7 +31,7 @@ def app() -> None:
             working_directory=args.working_dir,
         )
         result = runner.run_from_yaml(args.yaml_path, goal_text=args.goal)
-        sys.stdout.write(json.dumps(result, indent=2) + "\n")
+        sys.stdout.write(json.dumps(result, indent=2, ensure_ascii=False) + "\n")
         sys.exit(0 if result["status"] == "succeeded" else 1)
     else:
         parser.print_help()

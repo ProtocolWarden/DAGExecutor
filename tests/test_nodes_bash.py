@@ -44,7 +44,7 @@ def test_stdout_captured(tmp_path):
 
 def test_stderr_captured_on_failure(tmp_path):
     runner = BashNodeRunner()
-    result = runner.run(_node("echo err >&2; exit 1"), _ctx(), "/tmp/a", str(tmp_path))
+    result = runner.run(_node("sh -c 'echo err >&2; exit 1'"), _ctx(), "/tmp/a", str(tmp_path))
     assert result.success is False
     assert "err" in result.stderr
 

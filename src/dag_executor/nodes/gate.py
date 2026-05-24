@@ -27,7 +27,7 @@ class GateNodeRunner:
         approved_path = gates_dir / f"{node.id}.approved"
         rejected_path = gates_dir / f"{node.id}.rejected"
 
-        pending_path.write_text(node.gate_message or "")
+        pending_path.write_text(node.gate_message or "", encoding="utf-8")
 
         deadline = (
             time.monotonic() + node.timeout_seconds

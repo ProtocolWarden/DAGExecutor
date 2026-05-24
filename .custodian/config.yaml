@@ -1,3 +1,8 @@
 repo_key: DAGExecutor
 src_root: src/dag_executor
 tests_root: tests
+
+audit:
+  # config.py is the designated environment-access layer (C13).
+  c13_allowed_paths:
+    - "src/dag_executor/config.py"

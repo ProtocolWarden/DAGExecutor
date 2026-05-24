@@ -23,7 +23,7 @@ def test_single_bash_node_succeeds(tmp_path):
 
 
 def test_single_bash_failure(tmp_path):
-    spec = _spec([{"id": "n1", "type": "bash", "command": "exit 1"}])
+    spec = _spec([{"id": "n1", "type": "bash", "command": "false"}])
     runner = DAGExecutorRunner(artifacts_dir=str(tmp_path))
     result = runner.run_graph(spec)
     assert result["status"] == "failed"
@@ -41,7 +41,7 @@ def test_linear_chain_all_succeed(tmp_path):
 
 def test_skip_on_dep_failure(tmp_path):
     spec = _spec([
-        {"id": "fail_node", "type": "bash", "command": "exit 1"},
+        {"id": "fail_node", "type": "bash", "command": "false"},
         {
             "id": "skip_node",
             "type": "bash",
@@ -72,7 +72,7 @@ def test_parallel_layer_all_succeed(tmp_path):
 
 def test_all_done_trigger_runs_despite_failure(tmp_path):
     spec = _spec([
-        {"id": "fail_node", "type": "bash", "command": "exit 1"},
+        {"id": "fail_node", "type": "bash", "command": "false"},
         {
             "id": "always_node",
             "type": "bash",
