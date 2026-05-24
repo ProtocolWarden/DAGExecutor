@@ -2,9 +2,9 @@
 # Copyright (C) 2026 ProtocolWarden
 from __future__ import annotations
 
-import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from dag_executor.config import child_env
 from dag_executor.models import NodeResult, NodeSpec
 from dag_executor.nodes.base import resolve_command, run_subprocess
 from dag_executor.variables import SubstitutionContext, substitute
@@ -78,7 +78,7 @@ class LoopNodeRunner:
         cmd_template = node.command or ""
 
         def run_item(item: str) -> tuple[str, int, str, str]:
-            env = {**os.environ, "ITEM": item}
+            env = child_env({"ITEM": item})
             item_context = SubstitutionContext(
                 node_outputs={**context.node_outputs, "ITEM": item},
                 workflow_id=context.workflow_id,

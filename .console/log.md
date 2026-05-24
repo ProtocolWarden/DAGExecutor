@@ -1,5 +1,35 @@
 # Log
 
+## 2026-05-23 — Custodian cleanup to zero findings + real unit tests; activate hooks
+
+Cleared all ~32 Custodian findings (`0 total findings | clean`) and activated the
+pre-push hook.
+
+Source fixes (behaviour-preserving):
+- C13: added `dag_executor.config.child_env()` as the environment-access layer;
+  `nodes/loop.py` now builds the fan-out child env through it instead of reading
+  `os.environ` directly. Allowed `config.py` via `.custodian/config.yaml`
+  `audit.c13_allowed_paths`.
+- C41: `cli.py` `json.dumps(..., ensure_ascii=False)`.
+- C16: `encoding="utf-8"` on `loader.py` `read_text` and `nodes/gate.py` `write_text`.
+- D3: `cli.app()` annotated `-> NoReturn` (`from typing import NoReturn`).
+
+Repo hygiene:
+- S4: `tests/conftest.py` gained a venv guard; also taught the cxrp/rxp mock to
+  auto-vivify attributes so `core_runner.process` imports cleanly without RxP.
+- W6/W2: added `.hooks/pre-commit` (log-discipline) and ran
+  `git config core.hooksPath .hooks`.
+- W7: `.gitignore` now uses `.console/*` allow-list pattern + `CLAUDE.md`.
+- M1: added `CHANGELOG.md` (Keep a Changelog).
+- R3/R4/DC4: README gained "What this repo is / is not", Quick start, Architecture.
+
+Tests (T1/T6/T7): added genuine unit tests under `tests/unit/` — `test_cli.py`,
+`test_models.py`, `test_config.py`, and `nodes/{test_base,test_agent,test_bash,
+test_loop,test_gate,test_script}.py`. Subprocess/time mocked; behaviour exercised.
+Also fixed pre-existing buggy tests that assumed shell semantics (`exit 1` /
+`>&2` through `shlex.split` + non-shell `safe_run`): switched to `false` /
+`sh -c '...'`. `105 passed`.
+
 ## 2026-05-21 — Add closing fence to console-context block
 
 Added <!-- /console-context --> end marker so OperatorConsole only replaces its

@@ -87,6 +87,6 @@ def load_graph(data: dict[str, Any], goal_text: str = "") -> GraphSpec:
 
 
 def load_graph_file(path: str, goal_text: str = "") -> GraphSpec:
-    text = Path(path).read_text()
+    text = Path(path).read_text(encoding="utf-8")
     data = yaml.safe_load(text) or {}
     return load_graph(data, goal_text=goal_text)

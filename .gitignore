@@ -8,4 +8,9 @@ build/
 .venv/
 .warehouse-venv/
 *.egg
-.console/.context
+.console/*
+!.console/task.md
+!.console/backlog.md
+!.console/guidelines.md
+!.console/log.md
+CLAUDE.md
