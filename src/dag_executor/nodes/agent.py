@@ -24,12 +24,13 @@ class AgentNodeRunner:
         worker_backend: Literal["claude_code", "codex_cli"] = "claude_code",
     ) -> NodeResult:
         goal_text = context.goal_text
-        model = node.model or "claude-sonnet-4-5"
+        model = node.model_for_backend(worker_backend, default_model="claude-sonnet-4-5")
+        effort = node.effort_for_backend(worker_backend)
 
         if worker_backend == "codex_cli":
-            cmd = self._build_codex_cmd(goal_text, model)
+            cmd = self._build_codex_cmd(goal_text, model, effort)
         else:
-            cmd = self._build_claude_cmd(goal_text, model, node, context)
+            cmd = self._build_claude_cmd(goal_text, model, effort, node, context)
 
         exit_code, stdout, stderr = run_subprocess(
             cmd,
@@ -50,6 +51,7 @@ class AgentNodeRunner:
         self,
         goal_text: str,
         model: str,
+        effort: str | None,
         node: NodeSpec,
         context: SubstitutionContext,
     ) -> list[str]:
@@ -60,10 +62,16 @@ class AgentNodeRunner:
             "--no-auto-commits",
             "--model", model,
         ]
+        if effort:
+            cmd += ["--effort", effort]
         if node.command:
             extra = substitute(node.command, context)
             cmd += ["--append-system-prompt", extra]
         return cmd
 
-    def _build_codex_cmd(self, goal_text: str, model: str) -> list[str]:
-        return ["codex", "--model", model, "--approval-mode", "full-auto", "-q", goal_text]
+    def _build_codex_cmd(self, goal_text: str, model: str, effort: str | None) -> list[str]:
+        cmd = ["codex", "--model", model, "--approval-mode", "full-auto"]
+        if effort:
+            cmd += ["-c", f'model_reasoning_effort="{effort}"']
+        cmd += ["-q", goal_text]
+        return cmd

@@ -75,3 +75,11 @@ Branch: feat/p5-revert-to-shim. Staged, not committed.
 ## 2026-05-23 — Standardize pre-push hook (file only)
 
 - Updated `.hooks/pre-push` to the auto-discovering variant. NOT activating core.hooksPath yet: repo has pre-existing audit findings that would block pushes under the fail-closed guard; activate after that cleanup.
+
+## 2026-05-25 — Add backend-aware model and effort fields for agent nodes
+
+- Extended `NodeSpec` with optional `effort`, `backend_models`, and `backend_efforts`.
+- Agent node subprocess construction now selects model+effort per backend:
+  - Claude gets `--model` and `--effort`
+  - Codex gets `--model` and `model_reasoning_effort`
+- YAML loader accepts the new fields and the focused agent-node test slice passed.

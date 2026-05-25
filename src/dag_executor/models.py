@@ -29,6 +29,9 @@ class NodeSpec:
     # agent / bash / script
     command: str | None = None
     model: str | None = None
+    effort: str | None = None
+    backend_models: dict[str, str] = field(default_factory=dict)
+    backend_efforts: dict[str, str] = field(default_factory=dict)
     context: list[str] = field(default_factory=list)
     # loop
     items_from: str | None = None
@@ -39,6 +42,12 @@ class NodeSpec:
     trigger_rule: TriggerRule = TriggerRule.ALL_SUCCESS
     timeout_seconds: int | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
+
+    def model_for_backend(self, backend: str, default_model: str) -> str:
+        return self.backend_models.get(backend, self.model or default_model)
+
+    def effort_for_backend(self, backend: str) -> str | None:
+        return self.backend_efforts.get(backend, self.effort)
 
 
 @dataclass
