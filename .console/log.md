@@ -1,5 +1,16 @@
 # Log
 
+## 2026-06-04 — Console reconciliation: enforce R1/R2
+
+Enforce-only pass per console-reconciliation-spec. This repo's `.console/` was
+already clean and under budget, so no scrub or prune was needed.
+
+- Verified no scrub-target leak in tracked `.console/`/`docs/` (git grep clean).
+- `cl reconcile check` GREEN (prune-ready).
+- log.md 85 lines, well under the R1 budget of 400.
+- Set `audit.reconcile_enforce: true` in `.custodian/config.yaml` so the opt-in
+  R1/R2 detectors enforce; audit confirms zero R1/R2 findings.
+
 ## 2026-05-23 — Custodian cleanup to zero findings + real unit tests; activate hooks
 
 Cleared all ~32 Custodian findings (`0 total findings | clean`) and activated the
