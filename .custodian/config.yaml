@@ -3,6 +3,8 @@ src_root: src/dag_executor
 tests_root: tests
 
 audit:
+  # This repo's .console/ is reconciled + clean + under budget — enforce R1/R2.
+  reconcile_enforce: true
   # config.py is the designated environment-access layer (C13).
   c13_allowed_paths:
     - "src/dag_executor/config.py"
