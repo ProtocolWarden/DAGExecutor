@@ -15,7 +15,21 @@ jobs:
           python-version: "3.12"
       - name: Install custodian
         run: pip install "custodian @ git+https://github.com/ProtocolWarden/Custodian.git@main"
-      - name: Run custodian audit
+      - name: Materialize boundary artifact file
+        # Decode the boundary disclosure artifact from the base64 CONTENT secret
+        # REPOGRAPH_BOUNDARY_ARTIFACT_B64 (the older *_FILE path secret cannot resolve
+        # on a CI runner). Graceful: skip if absent (B2 flags it if required).
         env:
-          REPOGRAPH_BOUNDARY_ARTIFACT_FILE: ${{ secrets.REPOGRAPH_BOUNDARY_ARTIFACT_FILE_PATH }}
-        run: custodian-multi --repos . --fail-on-findings --no-color
+          REPOGRAPH_BOUNDARY_ARTIFACT_B64: ${{ secrets.REPOGRAPH_BOUNDARY_ARTIFACT_B64 }}
+        run: |
+          if [ -z "${REPOGRAPH_BOUNDARY_ARTIFACT_B64:-}" ]; then
+            echo "REPOGRAPH_BOUNDARY_ARTIFACT_B64 not set — skipping (B2 flags if required)."
+            exit 0
+          fi
+          dest="$(mktemp "${RUNNER_TEMP:-/tmp}/repograph-boundary-XXXXXX.json")"
+          printf '%s' "$REPOGRAPH_BOUNDARY_ARTIFACT_B64" | base64 -d > "$dest"
+          echo "REPOGRAPH_BOUNDARY_ARTIFACT_FILE=$dest" >> "$GITHUB_ENV"
+      - name: Run custodian audit
+        run: |
+          git config core.hooksPath .hooks
+          custodian-multi --repos . --fail-on-findings --no-color
