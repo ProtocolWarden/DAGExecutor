@@ -8,3 +8,11 @@ audit:
   # config.py is the designated environment-access layer (C13).
   c13_allowed_paths:
     - "src/dag_executor/config.py"
+
+# ---------------------------------------------------------------------------
+# Privacy / boundary enforcement (Custodian B-class)
+# ---------------------------------------------------------------------------
+privacy:
+  require_boundary_artifact: true
+  # No baked-in artifact path: the pre-push hook / CI resolve and export
+  # REPOGRAPH_BOUNDARY_ARTIFACT_FILE by role. Absent env => B2 fails closed.
