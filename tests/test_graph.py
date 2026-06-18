@@ -77,13 +77,6 @@ def test_empty_graph_no_layers():
     assert layers == [] or all(len(l) == 0 for l in layers)
 
 
-def test_get_node_by_id():
-    spec = load_graph(_make([{"id": "alpha", "type": "bash", "command": "echo"}]))
-    dag = DagGraph(spec)
-    node = dag.get_node("alpha")
-    assert node.id == "alpha"
-
-
 def test_diamond_dependency_layers():
     # a → b, a → c, b → d, c → d
     spec = load_graph(_make([

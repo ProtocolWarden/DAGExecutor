@@ -45,7 +45,3 @@ class DagGraph:
         # rx.layers returns list of lists of node data (not indices)
         raw_layers = rx.layers(self._graph, roots)
         return [list(layer) for layer in raw_layers]
-
-    def get_node(self, node_id: str) -> NodeSpec:
-        idx = self._index_map[node_id]
-        return self._graph[idx]
