@@ -1,5 +1,11 @@
 # Log
 
+## 2026-06-18 — chore: bump custodian pin to d6ba8ab (collision-masking fix)
+
+Bumped custodian pin c724dee → d6ba8ab (Custodian #48: collision-ID findings
+un-masked + content-less B2 message). Keeps the local pre-push audit guard
+aligned with CI's `custodian@main`.
+
 ## 2026-06-15 — chore: cwd-safe ContextGuard hook command
 
 Hardened `.claude/settings.json` hook commands to

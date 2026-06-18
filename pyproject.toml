@@ -21,7 +21,7 @@ dependencies = [
 dev = [
   "pytest>=8.0",
   "ruff>=0.5",
-  "custodian @ git+https://github.com/ProtocolWarden/Custodian.git@c724dee7990ae4fe0c00d4e9a45ed459dff0fa1a",
+  "custodian @ git+https://github.com/ProtocolWarden/Custodian.git@d6ba8ab245c6f4e79e9f8fffd4e4221bfaf266e8",
 ]
 
 [project.scripts]
