@@ -109,3 +109,12 @@ the `_RUNNERS` dispatch dict as `dict[NodeType, type[NodeRunner]]`, so every
 concrete runner is now structurally enforced against the Protocol and a future
 runner whose `run()` signature drifts fails the type check instead of at runtime.
 Pure annotation, no behaviour change. ty clean; 105 tests green.
+
+## 2026-06-18 — cleanup: delete unused DagGraph.get_node
+
+Ecosystem remediation (Phase 3). `DagGraph.get_node` was a test-only accessor
+(referenced solely by test_graph.py; the executor walks the DAG via `layers()`,
+never by id lookup). Cross-repo verified DAGExecutor-only, not in `__all__`.
+Removed the method + its dedicated test. `_index_map` stays (used by edge build).
+ruff + 104 tests green; audit B2-env only. (Pre-existing ty diagnostic in
+layers() is unrelated and not in CI scope.)
