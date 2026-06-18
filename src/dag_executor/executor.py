@@ -13,6 +13,7 @@ from dag_executor.graph import DagGraph
 from dag_executor.loader import load_graph_file
 from dag_executor.models import GraphSpec, NodeResult, NodeSpec, NodeType, TriggerRule
 from dag_executor.nodes.agent import AgentNodeRunner
+from dag_executor.nodes.base import NodeRunner
 from dag_executor.nodes.bash import BashNodeRunner
 from dag_executor.nodes.gate import GateNodeRunner
 from dag_executor.nodes.loop import LoopNodeRunner
@@ -20,7 +21,11 @@ from dag_executor.nodes.script import ScriptNodeRunner
 from dag_executor.variables import SubstitutionContext
 
 
-_RUNNERS = {
+# Typed against the NodeRunner Protocol so the dispatch is structurally
+# enforced: every concrete runner must satisfy NodeRunner.run, and a future
+# runner whose signature drifts fails the type check instead of at runtime.
+# (Previously the Protocol was defined but never referenced — inert.)
+_RUNNERS: dict[NodeType, type[NodeRunner]] = {
     NodeType.AGENT: AgentNodeRunner,
     NodeType.BASH: BashNodeRunner,
     NodeType.SCRIPT: ScriptNodeRunner,

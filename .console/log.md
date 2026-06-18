@@ -100,3 +100,12 @@ Branch: feat/p5-revert-to-shim. Staged, not committed.
   - Claude gets `--model` and `--effort`
   - Codex gets `--model` and `model_reasoning_effort`
 - YAML loader accepts the new fields and the focused agent-node test slice passed.
+
+## 2026-06-18 — wire(executor): type _RUNNERS against the NodeRunner Protocol
+
+Part of the ecosystem incomplete-integration remediation. `NodeRunner` (Protocol,
+nodes/base.py) was defined but never referenced — inert documentation. Annotated
+the `_RUNNERS` dispatch dict as `dict[NodeType, type[NodeRunner]]`, so every
+concrete runner is now structurally enforced against the Protocol and a future
+runner whose `run()` signature drifts fails the type check instead of at runtime.
+Pure annotation, no behaviour change. ty clean; 105 tests green.
